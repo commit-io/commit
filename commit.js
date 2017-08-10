@@ -1,4 +1,5 @@
 'use latest';
+
 import bodyParser from 'body-parser';
 import express from 'express';
 import Webtask from 'webtask-tools';
@@ -8,10 +9,11 @@ import { ObjectID } from 'mongodb';
 const collection = 'my-collection';
 const server = express();
 
-
 server.use(bodyParser.json());
+
 server.get('/:_id', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.data;
+
   MongoClient.connect(MONGO_URL, (err, db) => {
     const { _id } = req.params ;
     if (err) return next(err);
@@ -22,6 +24,7 @@ server.get('/:_id', (req, res, next) => {
     });
   });
 });
+
 server.post('/', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.data;
   // Do data sanitation here.
@@ -35,4 +38,13 @@ server.post('/', (req, res, next) => {
     });
   });
 });
-module.exports = Webtask.fromExpress(server);
+
+server.post('/callback', (req, res, next) => {
+  console.log(req, res, next);
+});
+
+module.exports = Webtask.fromExpress(server).auth0({
+  loginError: function (error, ctx, req, res, baseUrl) {
+    console.log(error);
+  }
+});
