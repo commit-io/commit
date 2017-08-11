@@ -19,22 +19,12 @@ const server = express();
 
 server.use(bodyParser.json());
 
-server.get('/asdsasad/:_id', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.data;
-
-  MongoClient.connect(MONGO_URL, (err, db) => {
-    const { _id } = req.params ;
-    if (err) return next(err);
-    db.collection(collection).findOne({ _id : new ObjectID(_id) }, (err, result) => {
-      db.close();
-      if (err) return next(err);
-      res.status(200).send(result);
-    });
-  });
+server.get('/slack', (req, res) => {
+  res.status(200).send('slack');
 });
 
 server.get('/app', (req, res) => {
-  const HTML = renderView();
+  const HTML = renderView(req.webtaskContext);
 
   res.set('Content-Type', 'text/html');
   res.status(200).send(HTML);
@@ -85,5 +75,7 @@ module.exports = Webtask.fromExpress(server).auth0({
       });
     }
     return cb(null, user);
-  }
+  }, exclude: [
+    '/slack',
+  ]
 });

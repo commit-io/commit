@@ -1,4 +1,4 @@
-const renderView = (locals) => {
+const renderView = (ctx) => {
   return `
   <html lang="en" >
   <head>
@@ -29,10 +29,10 @@ const renderView = (locals) => {
       app.config(function($routeProvider) {
         $routeProvider
         .when("/", {
-          template: '${renderRouteView('repo')}'
+          template: '${renderRouteView(ctx, 'repo')}'
         })
         .when("/slack", {
-          template: '${renderRouteView('slack')}'
+          template: '${renderRouteView(ctx, 'slack')}'
         })
       });
 
@@ -54,7 +54,7 @@ const renderView = (locals) => {
             data: repo
           }).then(function (response) {
             console.log(response.data.data);
-            $scope.repos = response.data.data;
+            $window.location = "#/slack";
           });
         };
       });
@@ -66,7 +66,7 @@ const renderView = (locals) => {
   `;
 };
 
-const renderRouteView = (view) => {
+const renderRouteView = (ctx, view) => {
   switch (view) {
     case 'repo':
       return `
@@ -89,10 +89,16 @@ const renderRouteView = (view) => {
             </md-card>
           </div>
         </md-content>
-      </div>`.replace(/[\n\r]/g, '');;
+      </div>`.replace(/[\n\r]/g, '');
     case 'slack':
-
-      break;
+    return `
+    <div ng-cloak >
+      <md-content class="md-padding" layout-align="center" layout="column">
+        <div layout="row" layout-wrap>
+          <a href="https://slack.com/oauth/authorize?client_id=${ctx.secrets.SLACK_CLIENT_ID}&scope=bot channels:history chat:write:bot&redirect_uri=${ctx.secrets.SLACK_AUTH_REDIRECT_URL}"><img src="https://success.highfive.com/hc/en-us/article_attachments/202056963/slack-logo.jpg" alt="Login With Slack"></a>
+        </div>
+      </md-content>
+    </div>`.replace(/[\n\r]/g, '');
   }
 };
 
