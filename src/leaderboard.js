@@ -9,7 +9,7 @@ const createLeaderboard = (err, ctx, repo, cb) => {
 
   let leaderboard = {
     repo,
-    points: []
+    score: {}
   };
 
   User.findOne(ctx, {
@@ -26,6 +26,76 @@ const createLeaderboard = (err, ctx, repo, cb) => {
   });
 };
 
+const saveChannel = (err, ctx, channel, cb) => {
+  if (err) return cb(err);
+
+  Leaderboard.findOne(ctx, {
+    ownerId: ctx.user.sub
+  }, (err, leaderboard) => {
+    if (err) return cb(err);
+
+    leaderboard.channel = channel;
+    Leaderboard.save(ctx, leaderboard, (err, result) => {
+      if (err) return cb(err);
+      return cb(null, result)
+    });
+  });
+};
+
+const saveWebhook = (ctx, hook, cb) => {
+  Leaderboard.findOne(ctx, {
+    ownerId: ctx.user.sub
+  }, (err, leaderboard) => {
+    if (err) return cb(err);
+
+    leaderboard.hook = hook;
+    Leaderboard.save(ctx, leaderboard, (err, result) => {
+      if (err) return cb(err);
+      return cb(null, result)
+    });
+  });
+};
+
+const getScore = (ctx, cb) => {
+  Leaderboard.findOne(ctx, {
+    ownerId: ctx.user.sub
+  }, (err, leaderboard) => {
+    if (err) return cb(err);
+
+    let points = {};
+
+    Object.keys(leaderboard.score).forEach(user => {
+      points[user] = leaderboard.score[user].length;
+    });
+
+    let result = {
+      points,
+      channel: leaderboard.channel,
+      repo: leaderboard.repo
+    };
+    cb(null, result);
+  });
+};
+
+const countScore = (leaderboard, cb) => {
+  let points = {};
+
+  Object.keys(leaderboard.score).forEach(user => {
+    points[user] = leaderboard.score[user].length;
+  });
+
+  let result = {
+    points,
+    channel: leaderboard.channel,
+    repo: leaderboard.repo
+  };
+  cb(null, result);
+};
+
 module.exports = {
-  createLeaderboard
+  createLeaderboard,
+  saveChannel,
+  saveWebhook,
+  getScore,
+  countScore
 };
