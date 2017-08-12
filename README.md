@@ -1,6 +1,6 @@
 # Commit
 
-![logo](https://image.ibb.co/neQT6a/commit_io.png | width=200)
+![logo](https://avatars1.githubusercontent.com/oa/525402?v=4&u=52d35b790d6044e52ddb5d1acfaef7e52b0b5c8e&s=240)
 
 Commit is a simple motivation game for developer teams using Github + Slack.
 
