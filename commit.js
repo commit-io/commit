@@ -137,9 +137,6 @@ module.exports = Webtask.fromExpress(server).auth0({
       });
     });
   },
-  loginError: function (error, ctx, req, res, baseUrl) {
-    console.log(error);
-  },
   validateToken: function (ctx, req, token, cb) {
     let user;
     console.log(token)

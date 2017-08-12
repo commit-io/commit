@@ -36,7 +36,7 @@ const findAll = (ctx, cb) => {
   MongoClient.connect(ctx.secrets.MONGO_URL || ctx.data.MONGO_URL, (err, db) => {
     if (err) return cb(err);
 
-    db.collection(collection).find({}, (err, result) => {
+    db.collection(collection).find().toArray((err, result) => {
       db.close();
       if (err) return cb(err);
 

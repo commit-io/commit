@@ -40,13 +40,13 @@ const sendMessage = (msg, channel, token, cb) => {
 
 const formatMsg = (points) => {
   let str =
-    `Here's the *Commit* Leaderboard
+    `Here's the weekly *Commit* leaderboard
 
 >>>`;
 
-  let sortedUsers = Object.keys(points).sort((a,b) => points[a] - points[b]);
+  let sortedUsers = Object.keys(points).sort((a,b) => points[b] - points[a]);
 
-  sortedUsers.forEach((user, index) => str += '\n' + `*${index+1}.* ${user}: *${points[user]} commits*`);
+  sortedUsers.forEach((user, index) => str += '\n' + `*${index+1}.* ${user}: *${points[user]} commit${(points[user] > 1) ? 's' : ''}*`);
 
   return str;
 };

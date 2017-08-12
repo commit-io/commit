@@ -77,11 +77,27 @@ const getScore = (ctx, cb) => {
   });
 };
 
+function getMonday(d) {
+  d = d.split('T')[0];
+  d = new Date(d);
+  let day = d.getDay();
+  let diff = d.getDate() - day + (day == 0 ? -6:1);
+
+  return new Date(d.setDate(diff)).getTime();
+};
+
 const countScore = (leaderboard, cb) => {
   let points = {};
+  let lastMonday = getMonday(new Date().toISOString());
 
-  Object.keys(leaderboard.score).forEach(user => {
-    points[user] = leaderboard.score[user].length;
+  let score = Object.keys(leaderboard.score).forEach(user => {
+    if(leaderboard.score[user]) {
+      leaderboard.score[user] = leaderboard
+      .score[user]
+      .filter(commit => new Date(commit.timestamp).getTime() > lastMonday);
+
+      points[user] = leaderboard.score[user].length;
+    }
   });
 
   let result = {
